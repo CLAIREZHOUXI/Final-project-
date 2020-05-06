@@ -1,0 +1,17 @@
+# Final-project-concept
+FocuPlz
+FocuPlz is a “time manager” and “digitalized work companion" for people to stay focus
+and productive when they work at home or remotely.
+
+Summary
+The user needs to set a timer and turn on the webcam to start.
+FocuPlz has two different work modes: “Focus mode” and “Deep focus
+mode”. The “Focus mode” will only detect people's body posture,
+while the “Deep focus mode” also detects whether the user is using the
+mouse.
+
+Once the user starts the “Focus mode”, user needs to focus on the work or a little character will show up and ask you to focus.
+If the camera can’t detect the user or any mouse movement, the character might have some responding reactions as well.
+
+The main goal of the project is not only to help people to get more work done but also to
+give support and delightfulness when people work alone.
