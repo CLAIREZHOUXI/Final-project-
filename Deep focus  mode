@@ -1,0 +1,150 @@
+// Copyright (c) 2019 ml5
+//
+// This software is released under the MIT License.
+// https://opensource.org/licenses/MIT
+
+/* ===
+ml5 Example
+Webcam Image Classification using a pre-trained customized model and p5.js
+This example uses p5 preload function to create the classifier
+=== */
+
+// Classifier Variable
+let classifier;
+// Model URL
+let imageModelURL = 'https://teachablemachine.withgoogle.com/models/81yHz6h7C/';
+let lastCheck = 0
+var switchedToObject = 0;
+// Video
+let video;
+let flippedVideo;
+// To store the classification
+let label = "";
+let runRandom = 0;
+let word;
+var timerValue = 20;
+var startButton;
+let lastmousemove = 0;
+let stagechange = 0;
+let img1;
+let img2;
+let imagearray = ['cat1.png', 'cat2.png'];
+
+// Load the model first
+function preload() {
+  classifier = ml5.imageClassifier(imageModelURL + 'model.json');
+}
+
+function setup() {
+  createCanvas(320, 260);
+  // Create the video
+  video = createCapture(VIDEO);
+  video.size(320, 240);
+  video.hide();
+
+  flippedVideo = ml5.flipImage(video)
+  // Start classifying
+  classifyVideo();
+  textAlign(CENTER);
+  setInterval(timeIt, 1000);
+  img1 = loadImage('cat1.png');
+  img2 = loadImage('cat2.png');
+  imagearray = [img1, img2];
+}
+
+function draw() {
+  background(0);
+  // Draw the video
+  image(flippedVideo, 0, 0);
+  // Draw the label
+  fill(255);
+  textSize(20);
+  textAlign(width / 2, height / 2);
+  text(label, width / 2, height - 4);
+  if (timerValue >= 10) {
+    text("0:" + timerValue, width / 2, height / 2);
+  }
+  if (timerValue < 10) {
+    text('0:0' + timerValue, width / 2, height / 2);
+  }
+  if (timerValue == 0) {
+    background(51);
+    text('have a break?', width / 2, height / 2);
+    return;
+  }
+
+  if (label == 'FOCUSED') {
+    runRandom = 1;
+    lastCheck = millis();
+    switchToobject = 0;
+    if (millis() > lastmousemove + 8000) {
+    stagechange = 1;
+  }
+  if (stagechange == 1) {
+    image(img1,0,0);
+  }
+  }
+  if (runRandom == 1) {
+    randomText();
+  }
+
+  if (label == 'DISTRACTED') {
+    if (millis() > lastCheck + 2000) {
+      switchToobject = 1;
+    }
+    if (switchToobject == 1) {
+      drawText();
+    }
+  }
+  
+  
+}
+
+function randomText() {
+  let words = ['cat1', 'cat2'];
+  word = random(words); // select random word
+  runRandom = 0;
+}
+
+
+function drawText() {
+  if (word == 'cat1') {
+    image(img1, 0, 0);
+  }
+  if (word == 'cat2') {
+    image(img2, 0, 0);
+  }
+
+}
+
+
+// Get a prediction for the current video frame
+function classifyVideo() {
+  flippedVideo = ml5.flipImage(video)
+  classifier.classify(flippedVideo, gotResult);
+}
+
+// When we get a result
+function gotResult(error, results) {
+  // If there is an error
+  if (error) {
+    console.error(error);
+    return;
+  }
+  // The results are in an array ordered by confidence.
+  // console.log(results[0]);
+  label = results[0].label;
+  // Classifiy again!
+  classifyVideo();
+}
+
+function timeIt() {
+  if (timerValue > 0) {
+    timerValue--;
+  }
+}
+
+function mouseMoved() {
+  lastmousemove = millis();
+  stagechange = 0;
+}
